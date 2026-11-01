@@ -1,0 +1,146 @@
+{
+  "updatedAt": "2026-11-01",
+  "source": "https://www.goldrank.co.kr/ipo-calendar/",
+  "ipos": [
+    {
+      "name": "바로팜",
+      "subscriptionStart": "2026-11-02",
+      "subscriptionEnd": "2026-11-03",
+      "brokers": "미래",
+      "type": "일반공모주"
+    },
+    {
+      "name": "동원파츠",
+      "subscriptionStart": "2026-11-02",
+      "subscriptionEnd": "2026-11-03",
+      "brokers": "삼성",
+      "type": "일반공모주"
+    },
+    {
+      "name": "넥스아이",
+      "subscriptionStart": "2026-11-03",
+      "subscriptionEnd": "2026-11-04",
+      "brokers": "한국",
+      "type": "일반공모주"
+    },
+    {
+      "name": "영광와이케이엠씨",
+      "subscriptionStart": "2026-11-04",
+      "subscriptionEnd": "2026-11-05",
+      "brokers": "대신",
+      "type": "일반공모주"
+    },
+    {
+      "name": "옵토닉스",
+      "subscriptionStart": "2026-11-05",
+      "subscriptionEnd": "2026-11-06",
+      "brokers": "한국",
+      "type": "일반공모주"
+    },
+    {
+      "name": "에이엘로봇",
+      "subscriptionStart": "2026-11-06",
+      "subscriptionEnd": "2026-11-09",
+      "brokers": "대신",
+      "type": "일반공모주"
+    },
+    {
+      "name": "하나에어로다이내믹스",
+      "subscriptionStart": "2026-11-10",
+      "subscriptionEnd": "2026-11-11",
+      "brokers": "IBK",
+      "type": "일반공모주"
+    },
+    {
+      "name": "다비오",
+      "subscriptionStart": "2026-11-10",
+      "subscriptionEnd": "2026-11-11",
+      "brokers": "대신",
+      "type": "일반공모주"
+    },
+    {
+      "name": "엠비디",
+      "subscriptionStart": "2026-11-12",
+      "subscriptionEnd": "2026-11-13",
+      "brokers": "하나",
+      "type": "일반공모주"
+    },
+    {
+      "name": "씨앤엠",
+      "subscriptionStart": "2026-11-12",
+      "subscriptionEnd": "2026-11-13",
+      "brokers": "한국",
+      "type": "일반공모주"
+    },
+    {
+      "name": "제이앤티지",
+      "subscriptionStart": "2026-11-12",
+      "subscriptionEnd": "2026-11-13",
+      "brokers": "대신,NH",
+      "type": "일반공모주"
+    },
+    {
+      "name": "에스에프씨",
+      "subscriptionStart": "2026-11-18",
+      "subscriptionEnd": "2026-11-19",
+      "brokers": "미래,한국,삼성",
+      "type": "일반공모주"
+    },
+    {
+      "name": "유캐스트",
+      "subscriptionStart": "2026-11-18",
+      "subscriptionEnd": "2026-11-19",
+      "brokers": "유진,신영",
+      "type": "일반공모주"
+    },
+    {
+      "name": "아델",
+      "subscriptionStart": "2026-11-23",
+      "subscriptionEnd": "2026-11-24",
+      "brokers": "삼성,미래",
+      "type": "일반공모주"
+    },
+    {
+      "name": "제논",
+      "subscriptionStart": "2026-11-24",
+      "subscriptionEnd": "2026-11-25",
+      "brokers": "삼성",
+      "type": "일반공모주"
+    },
+    {
+      "name": "케이엠에프",
+      "subscriptionStart": "2026-11-24",
+      "subscriptionEnd": "2026-11-25",
+      "brokers": "IBK",
+      "type": "일반공모주"
+    },
+    {
+      "name": "신영스팩12호",
+      "subscriptionStart": "2026-11-24",
+      "subscriptionEnd": "2026-11-25",
+      "brokers": "신영",
+      "type": "스팩"
+    },
+    {
+      "name": "에이엔에이치스트럭쳐",
+      "subscriptionStart": "2026-11-27",
+      "subscriptionEnd": "2026-11-30",
+      "brokers": "NH",
+      "type": "일반공모주"
+    },
+    {
+      "name": "엔키화이트햇",
+      "subscriptionStart": "2026-12-01",
+      "subscriptionEnd": "2026-12-02",
+      "brokers": "신영",
+      "type": "일반공모주"
+    },
+    {
+      "name": "우리투자스팩1호",
+      "subscriptionStart": "2026-12-02",
+      "subscriptionEnd": "2026-12-03",
+      "brokers": "우리투자",
+      "type": "스팩"
+    }
+  ]
+}
