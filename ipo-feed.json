@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-02T06:02:03.451086+00:00",
+  "updatedAt": "2026-11-02T15:51:36.147837+00:00",
   "source": "https://www.goldrank.co.kr/ipo-calendar/",
   "ipos": [
     {
@@ -49,13 +49,6 @@
       "subscriptionStart": "2026-11-10",
       "subscriptionEnd": "2026-11-11",
       "brokers": "IBK투자증권",
-      "type": "일반공모주"
-    },
-    {
-      "name": "다비오",
-      "subscriptionStart": "2026-11-10",
-      "subscriptionEnd": "2026-11-11",
-      "brokers": "대신증권",
       "type": "일반공모주"
     },
     {
@@ -133,6 +126,13 @@
       "subscriptionStart": "2026-12-01",
       "subscriptionEnd": "2026-12-02",
       "brokers": "신영증권",
+      "type": "일반공모주"
+    },
+    {
+      "name": "다비오",
+      "subscriptionStart": "2026-12-01",
+      "subscriptionEnd": "2026-12-02",
+      "brokers": "대신증권",
       "type": "일반공모주"
     },
     {
