@@ -44,6 +44,14 @@ def main():
             start,end=[x.replace(".","-") for x in dates[:2]]
             broker=row[bi] if bi>=0 and len(row)>bi else ""
             entries.append({"name":name,"subscriptionStart":start,"subscriptionEnd":end,"brokers":broker,"type":"스팩" if "스팩" in name else "일반공모주"})
+    # Preserve verified listing dates across scheduled calendar refreshes.
+    old_path=Path("ipo-feed.json")
+    if old_path.exists():
+        previous=json.loads(old_path.read_text(encoding="utf-8"))
+        known={x["name"]:x.get("listingDate") for x in previous.get("ipos",[]) if x.get("listingDate")}
+        for item in entries:
+            if item["name"] in known:
+                item["listingDate"]=known[item["name"]]
     if len(entries)<5:
         raise RuntimeError(f"Unexpected source format: only {len(entries)} entries; preserving last good feed")
     Path("ipo-feed.json").write_text(json.dumps({"updatedAt":datetime.now(timezone.utc).isoformat(),"source":SOURCE,"ipos":entries},ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
