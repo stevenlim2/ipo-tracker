@@ -7,21 +7,24 @@
       "subscriptionStart": "2026-11-02",
       "subscriptionEnd": "2026-11-03",
       "brokers": "미래에셋증권",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-11-11"
     },
     {
       "name": "동원파츠",
       "subscriptionStart": "2026-11-02",
       "subscriptionEnd": "2026-11-03",
       "brokers": "삼성증권",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-11-10"
     },
     {
       "name": "넥스아이",
       "subscriptionStart": "2026-11-03",
       "subscriptionEnd": "2026-11-04",
       "brokers": "한국투자증권",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-11-12"
     },
     {
       "name": "영광와이케이엠씨",
@@ -35,7 +38,8 @@
       "subscriptionStart": "2026-11-05",
       "subscriptionEnd": "2026-11-06",
       "brokers": "한국투자증권",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-11-17"
     },
     {
       "name": "에이엘로봇",
