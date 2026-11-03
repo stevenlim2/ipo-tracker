@@ -8,7 +8,46 @@ const SEED={ipos:[],records:[]};
 const KEY='ipo-tracker-personal-v1';const $=id=>document.getElementById(id), esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])), num=v=>v===''||v==null?0:Number(String(v).replace(/,/g,'')),fmt=v=>Math.round(v).toLocaleString('ko-KR')+'원';let db;try{db=JSON.parse(localStorage.getItem(KEY))||structuredClone(SEED)}catch{db=structuredClone(SEED)}if(!Array.isArray(db.ipos)||!Array.isArray(db.records))db=structuredClone(SEED);let editing=null,picked=null,yearVal='2026',feedIpos=[];const get=id=>db.ipos.find(x=>x.id===id), yr=i=>(i?.listingDate||i?.subscriptionEnd||'').slice(0,4),done=r=>r.sale!==''&&r.sale!=null,profit=r=>num(r.refund)-num(r.deposit)+num(r.sale)-num(r.expense),persist=()=>{localStorage.setItem(KEY,JSON.stringify(db));scheduleCloudSave()};
 function accountList(){return Array.isArray(db.accounts)?db.accounts:[];}
 function renderAccounts(){const rows=accountList();let html='';for(const type of ['증권사','은행']){const subset=rows.filter(a=>(a.type||'증권사')===type);if(!subset.length)continue;html+='<div class="account-group">'+type+'</div><div class="account-sort-group" data-type="'+type+'">'+subset.map(a=>'<div class="account-line" data-account-id="'+esc(a.id)+'"><button type="button" class="account-tap account-simple" data-copy="'+esc(a.id)+'"><strong>'+esc(a.bank)+'</strong><span>'+esc(String(a.number).replace(/-/g,''))+'</span></button><button type="button" class="account-drag-handle" aria-label="'+esc(a.bank)+' 순서 변경" title="드래그해서 순서 변경">☰</button></div>').join('')+'</div>';}$('accountRows').innerHTML=html||'<div class="empty">저장된 계좌가 없어요.</div>';for(const e of $('accountRows').querySelectorAll('[data-copy]'))e.onclick=()=>copyAccount(e.dataset.copy);for(const e of $('accountRows').querySelectorAll('.account-drag-handle'))setupAccountHandle(e);}
-function setupAccountHandle(handle){let active=false,changed=false,row=null,group=null,pointer=null;handle.addEventListener('pointerdown',e=>{if(!e.isPrimary||e.button!==0)return;e.preventDefault();row=handle.closest('.account-line');group=row.parentElement;active=true;changed=false;pointer=e.pointerId;row.classList.add('account-is-dragging');handle.setPointerCapture(pointer);});handle.addEventListener('pointermove',e=>{if(!active||e.pointerId!==pointer)return;const under=document.elementFromPoint(e.clientX,e.clientY)?.closest('.account-line');if(!under||under===row||under.parentElement!==group)return;const middle=under.getBoundingClientRect().top+under.getBoundingClientRect().height/2;group.insertBefore(row,e.clientY<middle?under:under.nextSibling);changed=true;});const finish=e=>{if(!active||e.pointerId!==pointer)return;active=false;row.classList.remove('account-is-dragging');if(changed){const ids=[...group.querySelectorAll('.account-line')].map(el=>el.dataset.accountId),list=accountList(),type=group.dataset.type,ordered=ids.map(id=>list.find(a=>a.id===id)).filter(Boolean);let idx=0;db.accounts=list.map(a=>(a.type||'증권사')===type?ordered[idx++]:a);persist();$('accountMessage').textContent='계좌 순서를 저장했어요.';}};handle.addEventListener('pointerup',finish);handle.addEventListener('pointercancel',finish);}
+function setupAccountHandle(handle){
+  handle.addEventListener('pointerdown',e=>{
+    if(!e.isPrimary||(e.pointerType==='mouse'&&e.button!==0))return;
+    e.preventDefault();
+    const row=handle.closest('.account-line'),group=row.parentElement,id=e.pointerId;
+    let moved=false,finished=false;
+    row.classList.add('account-is-dragging');
+    const move=ev=>{
+      if(ev.pointerId!==id||finished)return;
+      if(ev.cancelable)ev.preventDefault();
+      const candidates=[...group.querySelectorAll('.account-line')].filter(el=>el!==row);
+      const before=candidates.find(el=>ev.clientY<el.getBoundingClientRect().top+el.getBoundingClientRect().height/2);
+      const next=before||null;
+      if(row.nextElementSibling!==next){
+        group.insertBefore(row,next);
+        moved=true;
+      }
+    };
+    const finish=ev=>{
+      if(ev.pointerId!==id||finished)return;
+      finished=true;
+      document.removeEventListener('pointermove',move);
+      document.removeEventListener('pointerup',finish);
+      document.removeEventListener('pointercancel',finish);
+      row.classList.remove('account-is-dragging');
+      if(moved){
+        const ids=[...group.querySelectorAll('.account-line')].map(el=>el.dataset.accountId);
+        const list=accountList(),type=group.dataset.type;
+        const ordered=ids.map(key=>list.find(item=>item.id===key)).filter(Boolean);
+        let index=0;
+        db.accounts=list.map(item=>(item.type||'증권사')===type?ordered[index++]:item);
+        persist();
+        $('accountMessage').textContent='계좌 순서를 저장했어요.';
+      }
+    };
+    document.addEventListener('pointermove',move,{passive:false});
+    document.addEventListener('pointerup',finish);
+    document.addEventListener('pointercancel',finish);
+  });
+}
 async function copyAccount(id){const a=accountList().find(x=>x.id===id);if(!a)return;try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(String(a.number).replace(/-/g,''));else{const input=document.createElement('textarea');input.value=String(a.number).replace(/-/g,'');input.style.position='fixed';input.style.opacity='0';document.body.appendChild(input);input.select();if(!document.execCommand('copy'))throw Error('copy failed');input.remove();}$('accountMessage').textContent=a.bank+' 계좌번호 복사 완료';}catch(e){$('accountMessage').textContent='복사할 수 없어요. 계좌번호를 길게 눌러 복사해 주세요.';}}
 $('accountImportFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(!Array.isArray(data.accounts)||!data.accounts.every(a=>a.bank&&a.number&&['증권사','은행'].includes(a.type)))throw Error('invalid');db.accounts=data.accounts.map((a,i)=>({id:'account-'+Date.now()+'-'+i,type:a.type,bank:String(a.bank),number:String(a.number).replace(/-/g,'')}));persist();renderAccounts();$('accountMessage').textContent=db.accounts.length+'개 계좌 등록 완료';}catch(err){$('accountMessage').textContent='계좌 파일 형식을 확인해 주세요.';}e.target.value='';};
 $('accountsButton').onclick=()=>{$('accountMessage').textContent='';renderAccounts();$('accountOverlay').classList.add('open');};
