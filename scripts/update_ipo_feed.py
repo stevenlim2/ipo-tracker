@@ -169,6 +169,8 @@ def goldrank_feed():
             if not name or len(dates)<2:continue
             start,end=[x.replace(".","-") for x in dates[:2]]
             entries.append({"name":name,"subscriptionStart":start,"subscriptionEnd":end,"brokers":row[bi] if bi>=0 and len(row)>bi else "","type":"스팩" if "스팩" in name else "일반공모주"})
+    if listing_sources_ok==0:
+        raise RuntimeError("All listing-date sources failed; refusing to publish a misleading successful refresh")
     if len(entries)<5:raise RuntimeError("Goldrank returned too few IPOs")
     return entries
 
@@ -199,8 +201,10 @@ def main():
             if normalized(item["name"]) in known:
                 item["listingDate"]=known[normalized(item["name"])]
     # Prefer 38 listing dates, then check official KRX KIND.
+    listing_sources_ok=0
     try:
         published=listings38()
+        listing_sources_ok+=1
         for item in entries:
             date=published.get(normalized(item["name"]))
             if date:item["listingDate"]=date
@@ -210,6 +214,7 @@ def main():
     # Primary: official KRX KIND IPO company table. Only published listing dates are applied.
     try:
         official=kind_listing_dates()
+        listing_sources_ok+=1
         for item in entries:
             key=re.sub(r"\s+","",item["name"])
             match=official.get(key)
@@ -221,6 +226,7 @@ def main():
     # Secondary cross-check. Never infer a listing date from subscription or refund dates.
     try:
         confirmed=listing_dates()
+        listing_sources_ok+=1
         for item in entries:
             match=confirmed.get(re.sub(r"\s+","",item["name"]))
             if match and not item.get("listingDate"):
