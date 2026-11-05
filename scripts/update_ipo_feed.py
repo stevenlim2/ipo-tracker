@@ -174,182 +174,194 @@ def goldrank_feed():
 
 
 FINUTS_SOURCE = "https://www.finuts.co.kr/html/ipo/"
+FINUTS_CALENDAR_API = "https://www.finuts.co.kr/html/task/ipo/ipoCalendarListQuery.php"
 
-def finuts_diagnose(html):
-    """Print public page structure to identify its actual data endpoint."""
-    from urllib.parse import urljoin, urlparse
-    print(f"Finuts index HTML bytes: {len(html)}")
-    print("Finuts checkbox input tags:",re.findall(r"<input\\b[^>]*>",html,re.I)[:35])
-    for x in re.finditer("ipo-check",html):print("Finuts checkbox surroundings:",repr(html[x.start():x.start()+1450]));break
-    scripts=re.findall(r'<script\b[^>]*\bsrc\s*=\s*["\x27]([^"\x27]+)',html,re.I)
-    print(f"Finuts script assets ({len(scripts)}): {scripts[-25:]}")
-    for word in ("ipo_sn","ipoView","ipoList","calendar","ajax","events","getList","/api/"):
-        matches=list(re.finditer(re.escape(word),html,re.I))
-        if matches:
-            print(f"Finuts HTML token {word} ({len(matches)}): "+
-                  repr([html[max(0,m.start()-90):m.end()+180] for m in matches[:3]])[:900])
-    visited=0
-    for script in scripts[::-1]:
-        url=urljoin(FINUTS_SOURCE,script)
-        if urlparse(url).hostname not in ("www.finuts.co.kr","finuts.co.kr"):continue
-        if visited>=18:break
-        visited+=1
-        try:
-            req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0"})
-            with urllib.request.urlopen(req,timeout=9) as res:body=res.read(1200000).decode("utf-8","replace")
-            hits=[]
-            for word in ("calendarDate","checkedValue","SCHDL_SE_CD","SCHDL_YMD","SCHDL_DT","IPO_SN","ENT_NM","url:"):
-                for m in list(re.finditer(re.escape(word),body,re.I))[:2]:
-                    hits.append((word,body[max(0,m.start()-170):m.end()+220]))
-            if hits:
-                print(f"Finuts relevant JS {url}: "+repr(hits[:50])[:15000])
-        except Exception as exc:
-            print(f"Finuts script fetch skipped ({url}): {str(exc)[:110]}")
+def finuts_calendar():
+    """Use the live JSON endpoint called by Finuts' own calendar.
+    S is subscription, K is an explicitly published listing event.
+    """
+    from concurrent.futures import ThreadPoolExecutor, as_completed
     from urllib.parse import urlencode
-    api="https://www.finuts.co.kr/html/task/ipo/ipoCalendarListQuery.php"
-    for checked in (["K"], ["D","S","R","K"], ["sangjang"], ["listing"], ["ipo4"]):
-        for month in ("2026.11",):
+    now = datetime.now(timezone.utc).date()
+    base_month = now.year * 12 + now.month - 1
+
+    def get_month(offset):
+        month_number = base_month + offset
+        month = f"{month_number // 12:04d}.{month_number % 12 + 1:02d}"
+        qs = urlencode({
+            "calendarDate": month,
+            "checkedValue[]": ["chk2", "chk4"],
+        }, doseq=True)
+        request = urllib.request.Request(
+            FINUTS_CALENDAR_API + "?" + qs,
+            headers={
+                "User-Agent": "Mozilla/5.0 (compatible; IPOCalendarSync/1.0)",
+                "Referer": FINUTS_SOURCE,
+                "X-Requested-With": "XMLHttpRequest",
+                "Accept": "application/json, text/javascript, */*",
+            },
+        )
+        with urllib.request.urlopen(request, timeout=18) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+        rows = payload.get("data") if isinstance(payload, dict) else None
+        if rows is None:
+            return month, []
+        if not isinstance(rows, list):
+            raise RuntimeError(f"Finuts unexpected calendar data for {month}")
+        return month, rows
+
+    rows = []
+    successful_months = []
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = [executor.submit(get_month, offset) for offset in range(-4, 5)]
+        for future in as_completed(futures):
             try:
-                qs=urlencode({"calendarDate":month,"checkedValue[]":checked},doseq=True)
-                req=urllib.request.Request(api+"?"+qs,headers={"User-Agent":"Mozilla/5.0","Referer":FINUTS_SOURCE,"X-Requested-With":"XMLHttpRequest"})
-                with urllib.request.urlopen(req,timeout=12) as res:body=res.read().decode("utf-8","replace")
-                print(f"Finuts AJAX probe {month} filter={checked!r} length={len(body)} sample={body[:1400]!r}")
-                if checked==["K"]:
-                    from collections import Counter
-                    records=json.loads(body).get("data") or []
-                    print(f"Finuts AJAX event types: {dict(Counter(x.get('SCHDL_SE_CD') for x in records))}")
-                    for row in [x for x in records if x.get("SCHDL_SE_CD")=="K"][:25]:
-                        print("Finuts listing event:",repr({k:v for k,v in row.items() if k in ("ENT_NM","SCHDL_SE_CD","SE_CD","IPO_DATE","BGNG_YMD","END_YMD","IPO_SN") or "DATE" in k or "YMD" in k}))
+                month, data = future.result()
+                successful_months.append(month)
+                rows.extend(data)
+            except Exception as exc:
+                print(f"Finuts calendar request failed: {exc}")
 
-            except Exception as exc:print(f"Finuts AJAX probe error {checked!r}: {exc}")
-    for target in ("ipoList.php?cat=06","ipoList.php?cat=05"):
-        try:
-            url=urljoin(FINUTS_SOURCE,target)
-            req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0"})
-            with urllib.request.urlopen(req,timeout=10) as res:body=res.read().decode("utf-8","replace")
-            print(f"Finuts {target} size={len(body)}, contains ipo_sn={body.count('ipo_sn')}, dates={len(re.findall(r'20\d{2}[./-]\d{2}[./-]\d{2}',body))}")
-            for m in list(re.finditer("ipo_sn|ipoView|ajax|/api/",body,re.I))[:3]:
-                print("Finuts listing page snippet:",repr(body[max(0,m.start()-120):m.end()+200]))
-        except Exception as exc:print(f"Finuts {target} unavailable: {exc}")
+    if not successful_months or not rows:
+        raise RuntimeError("Finuts calendar API did not return any events")
 
-class FinutsLinks(HTMLParser):
-    def __init__(self):
-        super().__init__(); self.ids=set()
-    def handle_starttag(self,tag,attrs):
-        if tag=="a":
-            m=re.search(r"ipoView\.php\?ipo_sn=(\d+)",dict(attrs).get("href",""))
-            if m:self.ids.add(m.group(1))
+    subscriptions = {}
+    listings = {}
+    listing_conflicts = set()
+    earliest = (now - timedelta(days=100)).isoformat()
+    latest = (now + timedelta(days=150)).isoformat()
 
-def finuts_dates(entries):
-    from concurrent.futures import ThreadPoolExecutor
-    from html import unescape
-    req=urllib.request.Request(FINUTS_SOURCE,headers={"User-Agent":"Mozilla/5.0"})
-    with urllib.request.urlopen(req,timeout=20) as res:html=res.read().decode("utf-8","replace")
-    links=FinutsLinks();links.feed(html)
-    print(f"Finuts index discovered {len(links.ids)} IPO detail links")
-    if not links.ids:
-        finuts_diagnose(html)
-        raise RuntimeError("Finuts detail links not found; inspected actual JS endpoints")
-    names={normalized(x["name"]):x for x in entries}
-    def fetch(sn):
-        url=FINUTS_SOURCE+"ipoView.php?ipo_sn="+sn
-        req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0"})
-        with urllib.request.urlopen(req,timeout=12) as res:raw=res.read()
-        page=raw.decode("utf-8","replace")
-        title=re.search(r"<title[^>]*>(.*?)</title>",page,re.I|re.S)
-        if not title:return None
-        heading=normalized(unescape(re.sub(r"<[^>]+>"," ",title.group(1))))
-        name=next((n for n in names if n and n in heading),None)
-        if not name:return None
-        plain=" ".join(unescape(re.sub(r"<[^>]+>"," ",page)).split())
-        m=re.search(r"상장일\s*[:：]?\s*(20\d{2})\s*[.년/-]\s*(\d{1,2})\s*[.월/-]\s*(\d{1,2})",plain)
-        if not m:return None
-        y,mo,d=map(int,m.groups());date=f"{y:04d}-{mo:02d}-{d:02d}"
-        try:datetime.fromisoformat(date)
-        except ValueError:return None
-        return name,date
-    with ThreadPoolExecutor(max_workers=6) as pool:
-        results=list(pool.map(lambda sn: safe_finuts_fetch(fetch,sn),list(links.ids)[:120]))
-    found=dict(x for x in results if x)
-    if not found:raise RuntimeError("No matching Finuts listing dates")
-    return found
+    for event in rows:
+        if not isinstance(event, dict):
+            continue
+        category = str(event.get("SE_CD") or "")
+        if category not in ("IPO", "SPAC"):
+            continue
+        name = str(event.get("ENT_NM") or "").strip()
+        key = normalized(name)
+        if not key:
+            continue
+        event_type = str(event.get("SCHDL_SE_CD") or "")
+        if event_type == "K":
+            date = str(event.get("IPO_DATE") or "").strip()
+            try:
+                datetime.fromisoformat(date)
+            except ValueError:
+                continue
+            if key in listings and listings[key] != date:
+                listing_conflicts.add(key)
+            else:
+                listings[key] = date
+        elif event_type == "S":
+            start = str(event.get("BGNG_YMD") or "").strip()
+            end = str(event.get("END_YMD") or "").strip()
+            try:
+                datetime.fromisoformat(start)
+                datetime.fromisoformat(end)
+            except ValueError:
+                continue
+            if end < earliest or start > latest or end < start:
+                continue
+            item = {
+                "name": name,
+                "subscriptionStart": start,
+                "subscriptionEnd": end,
+                "brokers": str(event.get("INDCT_JUGANSA_NM") or ""),
+                "type": "스팩" if category == "SPAC" else "일반공모주",
+            }
+            existing = subscriptions.get(key)
+            if not existing or end > existing["subscriptionEnd"]:
+                subscriptions[key] = item
 
-def safe_finuts_fetch(fn,sn):
-    try:return fn(sn)
-    except Exception:return None
+    for key in listing_conflicts:
+        listings.pop(key, None)
+    if listing_conflicts:
+        print(f"Finuts conflicting listing dates skipped for {len(listing_conflicts)} IPOs")
+    print(f"Finuts API: {len(successful_months)} months, {len(subscriptions)} subscription records, {len(listings)} confirmed listing dates")
+    if not subscriptions and not listings:
+        raise RuntimeError("Finuts returned events but no usable subscription or listing dates")
+    return list(subscriptions.values()), listings
+
 
 def main():
-    # Never make the backup source a mandatory prerequisite to the primary source.
-    source_used=SOURCE_38_SUB
+    old_path = Path("ipo-feed.json")
+    previous = json.loads(old_path.read_text(encoding="utf-8")) if old_path.exists() else {}
+    old_entries = previous.get("ipos", [])
+    today = datetime.now(timezone.utc).date()
+
+    entries = []
+    finuts_listings = {}
+    finuts_ok = False
+    source_used = FINUTS_SOURCE
     try:
-        entries=feed38()
-        print(f"38 subscription records: {len(entries)}")
+        entries, finuts_listings = finuts_calendar()
+        finuts_ok = True
     except Exception as exc:
-        print(f"38 subscriptions unavailable, trying Goldrank: {exc}")
+        print(f"Finuts calendar unavailable: {exc}")
+
+    try:
+        goldrank = goldrank_feed()
+        if not finuts_ok:
+            entries = goldrank
+            source_used = SOURCE
+        else:
+            known = {normalized(item["name"]) for item in entries}
+            added = 0
+            for item in goldrank:
+                key = normalized(item["name"])
+                if key not in known:
+                    entries.append(item)
+                    known.add(key)
+                    added += 1
+            print(f"Goldrank supplemental subscription records: {added}")
+    except Exception as exc:
+        print(f"Goldrank calendar unavailable: {exc}")
+
+    # Preserve recently passed IPOs for late entries, and never discard a
+    # previously verified listing date just because one source is temporarily empty.
+    known = {normalized(item["name"]) for item in entries}
+    for item in old_entries:
+        key = normalized(item["name"])
+        if key in known:
+            continue
+        end = item.get("subscriptionEnd", "")
         try:
-            entries=goldrank_feed()
-            source_used=SOURCE
-        except Exception as fallback_exc:
-            print(f"Goldrank unavailable too: {fallback_exc}")
-            previous_path=Path("ipo-feed.json")
-            if not previous_path.exists():raise
-            entries=[dict(item) for item in json.loads(previous_path.read_text(encoding="utf-8")).get("ipos",[])]
-            source_used="preserved-existing-feed"
-            print(f"Preserving {len(entries)} existing IPOs; attempting listing-date updates")
-    # Preserve verified listing dates across scheduled calendar refreshes.
-    old_path=Path("ipo-feed.json")
-    if old_path.exists():
-        previous=json.loads(old_path.read_text(encoding="utf-8"))
-        known={normalized(x["name"]):x.get("listingDate") for x in previous.get("ipos",[]) if x.get("listingDate")}
-        for item in entries:
-            if normalized(item["name"]) in known:
-                item["listingDate"]=known[normalized(item["name"])]
-    try:
-        finuts=finuts_dates(entries)
-        for item in entries:
-            date=finuts.get(normalized(item["name"]))
-            if date:item["listingDate"]=date
-        print(f"Finuts matched {len(finuts)} listing dates")
-    except Exception as exc:
-        print(f"Finuts unavailable: {exc}")
-    # Prefer 38 listing dates, then check official KRX KIND.
-    listing_sources_ok=1 if "finuts" in locals() and finuts else 0
-    try:
-        published=listings38()
-        listing_sources_ok+=1
-        for item in entries:
-            date=published.get(normalized(item["name"]))
-            if date:item["listingDate"]=date
-        print(f"38 listing matches: {sum(normalized(x['name']) in published for x in entries)}")
-    except Exception as exc:
-        print(f"38 listings unavailable; retaining previous dates: {exc}")
-    # Primary: official KRX KIND IPO company table. Only published listing dates are applied.
-    try:
-        official=kind_listing_dates()
-        listing_sources_ok+=1
-        for item in entries:
-            key=re.sub(r"\s+","",item["name"])
-            match=official.get(key)
-            if match:
-                item["listingDate"]=match
-        print(f"KRX KIND matched {sum(bool(i.get('listingDate')) for i in entries)} IPO listing dates")
-    except Exception as exc:
-        print(f"KRX KIND unavailable; preserving existing dates: {exc}")
-    # Secondary cross-check. Never infer a listing date from subscription or refund dates.
-    try:
-        confirmed=listing_dates()
-        listing_sources_ok+=1
-        for item in entries:
-            match=confirmed.get(re.sub(r"\s+","",item["name"]))
-            if match and not item.get("listingDate"):
-                item["listingDate"]=match
-        print("Secondary source cross-check completed")
-    except Exception as exc:
-        print(f"Secondary listing source unavailable: {exc}")
-    if listing_sources_ok==0:
-        raise RuntimeError("All listing-date sources failed; refusing to publish a misleading successful refresh")
-    if len(entries)<5:
-        raise RuntimeError(f"Unexpected source format: only {len(entries)} entries; preserving last good feed")
-    Path("ipo-feed.json").write_text(json.dumps({"updatedAt":datetime.now(timezone.utc).isoformat(),"source":source_used,"ipos":entries},ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-    print(f"Saved {len(entries)} IPOs")
-if __name__=="__main__": main()
+            keep = datetime.fromisoformat(end).date() >= today - timedelta(days=21)
+        except (ValueError, TypeError):
+            keep = False
+        if keep:
+            entries.append(dict(item))
+            known.add(key)
+
+    old_dates = {
+        normalized(item["name"]): item.get("listingDate")
+        for item in old_entries if item.get("listingDate")
+    }
+    matches = 0
+    for item in entries:
+        key = normalized(item["name"])
+        published_date = finuts_listings.get(key)
+        if published_date:
+            item["listingDate"] = published_date
+            matches += 1
+        elif old_dates.get(key):
+            item["listingDate"] = old_dates[key]
+
+    if len(entries) < 5:
+        raise RuntimeError(f"Only {len(entries)} IPO entries available; refusing to replace the last feed")
+    if not finuts_ok and not entries:
+        raise RuntimeError("No live IPO calendar source available")
+
+    entries.sort(key=lambda x: (x.get("subscriptionEnd", ""), x.get("name", "")))
+    output = {
+        "updatedAt": datetime.now(timezone.utc).isoformat(),
+        "source": source_used,
+        "listingSource": FINUTS_SOURCE if finuts_ok else "previously-verified-only",
+        "listingMatches": matches,
+        "ipos": entries,
+    }
+    old_path.write_text(json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"Saved {len(entries)} IPOs; {matches} listing dates matched from Finuts; {sum(bool(x.get('listingDate')) for x in entries)} total dated IPOs")
+
+if __name__ == "__main__":
+    main()
