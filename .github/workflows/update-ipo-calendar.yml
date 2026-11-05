@@ -3,6 +3,10 @@ on:
   schedule:
     - cron: '15 */2 * * *'
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/update_ipo_feed.py'
 permissions:
   contents: write
 jobs:
