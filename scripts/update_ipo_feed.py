@@ -179,7 +179,7 @@ class FinutsLinks(HTMLParser):
         super().__init__(); self.ids=set()
     def handle_starttag(self,tag,attrs):
         if tag=="a":
-            m=re.search(r"ipoView\\.php\\?ipo_sn=(\\d+)",dict(attrs).get("href",""))
+            m=re.search(r"ipoView\.php\?ipo_sn=(\d+)",dict(attrs).get("href",""))
             if m:self.ids.add(m.group(1))
 
 def finuts_dates(entries):
@@ -188,6 +188,7 @@ def finuts_dates(entries):
     req=urllib.request.Request(FINUTS_SOURCE,headers={"User-Agent":"Mozilla/5.0"})
     with urllib.request.urlopen(req,timeout=20) as res:html=res.read().decode("utf-8","replace")
     links=FinutsLinks();links.feed(html)
+    print(f"Finuts index discovered {len(links.ids)} IPO detail links")
     if not links.ids:raise RuntimeError("Finuts detail links not found")
     names={normalized(x["name"]):x for x in entries}
     def fetch(sn):
@@ -201,7 +202,7 @@ def finuts_dates(entries):
         name=next((n for n in names if n and n in heading),None)
         if not name:return None
         plain=" ".join(unescape(re.sub(r"<[^>]+>"," ",page)).split())
-        m=re.search(r"상장일\\s*(20\\d{2})\\s*[.년/-]\\s*(\\d{1,2})\\s*[.월/-]\\s*(\\d{1,2})",plain)
+        m=re.search(r"상장일\s*[:：]?\s*(20\d{2})\s*[.년/-]\s*(\d{1,2})\s*[.월/-]\s*(\d{1,2})",plain)
         if not m:return None
         y,mo,d=map(int,m.groups());date=f"{y:04d}-{mo:02d}-{d:02d}"
         try:datetime.fromisoformat(date)
@@ -252,7 +253,7 @@ def main():
     except Exception as exc:
         print(f"Finuts unavailable: {exc}")
     # Prefer 38 listing dates, then check official KRX KIND.
-    listing_sources_ok=0
+    listing_sources_ok=1 if "finuts" in locals() and finuts else 0
     try:
         published=listings38()
         listing_sources_ok+=1
