@@ -174,6 +174,51 @@ def goldrank_feed():
     if len(entries)<5:raise RuntimeError("Goldrank returned too few IPOs")
     return entries
 
+
+FINUTS_SOURCE = "https://www.finuts.co.kr/html/ipo/"
+class FinutsLinks(HTMLParser):
+    def __init__(self):
+        super().__init__(); self.ids=set()
+    def handle_starttag(self,tag,attrs):
+        if tag=="a":
+            m=re.search(r"ipoView\\.php\\?ipo_sn=(\\d+)",dict(attrs).get("href",""))
+            if m:self.ids.add(m.group(1))
+
+def finuts_dates(entries):
+    from concurrent.futures import ThreadPoolExecutor
+    from html import unescape
+    req=urllib.request.Request(FINUTS_SOURCE,headers={"User-Agent":"Mozilla/5.0"})
+    with urllib.request.urlopen(req,timeout=20) as res:html=res.read().decode("utf-8","replace")
+    links=FinutsLinks();links.feed(html)
+    if not links.ids:raise RuntimeError("Finuts detail links not found")
+    names={normalized(x["name"]):x for x in entries}
+    def fetch(sn):
+        url=FINUTS_SOURCE+"ipoView.php?ipo_sn="+sn
+        req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0"})
+        with urllib.request.urlopen(req,timeout=12) as res:raw=res.read()
+        page=raw.decode("utf-8","replace")
+        title=re.search(r"<title[^>]*>(.*?)</title>",page,re.I|re.S)
+        if not title:return None
+        heading=normalized(unescape(re.sub(r"<[^>]+>"," ",title.group(1))))
+        name=next((n for n in names if n and n in heading),None)
+        if not name:return None
+        plain=" ".join(unescape(re.sub(r"<[^>]+>"," ",page)).split())
+        m=re.search(r"상장일\\s*(20\\d{2})\\s*[.년/-]\\s*(\\d{1,2})\\s*[.월/-]\\s*(\\d{1,2})",plain)
+        if not m:return None
+        y,mo,d=map(int,m.groups());date=f"{y:04d}-{mo:02d}-{d:02d}"
+        try:datetime.fromisoformat(date)
+        except ValueError:return None
+        return name,date
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        results=list(pool.map(lambda sn: safe_finuts_fetch(fetch,sn),list(links.ids)[:120]))
+    found=dict(x for x in results if x)
+    if not found:raise RuntimeError("No matching Finuts listing dates")
+    return found
+
+def safe_finuts_fetch(fn,sn):
+    try:return fn(sn)
+    except Exception:return None
+
 def main():
     # Never make the backup source a mandatory prerequisite to the primary source.
     source_used=SOURCE_38_SUB
@@ -200,6 +245,14 @@ def main():
         for item in entries:
             if normalized(item["name"]) in known:
                 item["listingDate"]=known[normalized(item["name"])]
+    try:
+        finuts=finuts_dates(entries)
+        for item in entries:
+            date=finuts.get(normalized(item["name"]))
+            if date:item["listingDate"]=date
+        print(f"Finuts matched {len(finuts)} listing dates")
+    except Exception as exc:
+        print(f"Finuts unavailable: {exc}")
     # Prefer 38 listing dates, then check official KRX KIND.
     listing_sources_ok=0
     try:
