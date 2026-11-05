@@ -7,6 +7,7 @@ from pathlib import Path
 
 SOURCE = "https://www.goldrank.co.kr/ipo-calendar/"
 LISTING_SOURCE = "https://ipo.aippopick.shop/"
+KIND_SOURCE = "https://kind.krx.co.kr/listinvstg/pubofrprogcom.do?method=searchPubofrProgComMain"
 class TableParser(HTMLParser):
     def __init__(self):
         super().__init__(); self.tables=[]; self.table=None; self.row=None; self.cell=None
@@ -54,6 +55,36 @@ def listing_dates():
         raise RuntimeError(f"Listing source format changed: only {len(found)} dated rows")
     return found
 
+def kind_listing_dates():
+    """Use KRX KIND's official IPO company table as the primary listing-date source."""
+    req=urllib.request.Request(KIND_SOURCE,headers={"User-Agent":"Mozilla/5.0 (compatible; IPOCalendarSync/1.0)"})
+    with urllib.request.urlopen(req,timeout=30) as res:
+        html=res.read().decode("utf-8","replace")
+    p=TableParser(); p.feed(html)
+    found={}
+    for table in p.tables:
+        if not table: continue
+        headers=table[0]
+        name_idx=next((i for i,c in enumerate(headers) if "회사명" in c or c.strip()=="기업명"),-1)
+        date_idx=next((i for i,c in enumerate(headers) if "상장예정일" in c),-1)
+        if name_idx<0 or date_idx<0: continue
+        for row in table[1:]:
+            if len(row)<=max(name_idx,date_idx): continue
+            name=re.sub(r"\s+","",row[name_idx])
+            raw=row[date_idx]
+            m=re.search(r"(20\d{2})[-./년 ]+([01]?\d)[-./월 ]+([0-3]?\d)",raw)
+            if not m or not name: continue
+            try:
+                y,mo,d=map(int,m.groups())
+                date=f"{y:04d}-{mo:02d}-{d:02d}"
+                datetime.fromisoformat(date)
+                found[name]=date
+            except ValueError:
+                continue
+    if not found:
+        raise RuntimeError("KIND page did not yield any official IPO listing dates")
+    return found
+
 def main():
     req=urllib.request.Request(SOURCE, headers={"User-Agent":"Mozilla/5.0 (compatible; IPOCalendarSync/1.0)"})
     with urllib.request.urlopen(req,timeout=25) as res:
@@ -82,16 +113,27 @@ def main():
         for item in entries:
             if item["name"] in known:
                 item["listingDate"]=known[item["name"]]
-    # A secondary source supplies exchange listing dates after announcement.
-    # If it is unavailable, retain the last confirmed dates rather than clearing them.
+    # Primary: official KRX KIND IPO company table. Only published listing dates are applied.
+    try:
+        official=kind_listing_dates()
+        for item in entries:
+            key=re.sub(r"\s+","",item["name"])
+            match=official.get(key)
+            if match:
+                item["listingDate"]=match
+        print(f"KRX KIND matched {sum(bool(i.get('listingDate')) for i in entries)} IPO listing dates")
+    except Exception as exc:
+        print(f"KRX KIND unavailable; preserving existing dates: {exc}")
+    # Secondary cross-check. Never infer a listing date from subscription or refund dates.
     try:
         confirmed=listing_dates()
         for item in entries:
             match=confirmed.get(re.sub(r"\s+","",item["name"]))
-            if match: item["listingDate"]=match
-        print(f"Matched listing dates for {sum(bool(i.get('listingDate')) for i in entries)} IPOs")
+            if match and not item.get("listingDate"):
+                item["listingDate"]=match
+        print("Secondary source cross-check completed")
     except Exception as exc:
-        print(f"Listing dates unavailable, preserving known dates: {exc}")
+        print(f"Secondary listing source unavailable: {exc}")
     if len(entries)<5:
         raise RuntimeError(f"Unexpected source format: only {len(entries)} entries; preserving last good feed")
     Path("ipo-feed.json").write_text(json.dumps({"updatedAt":datetime.now(timezone.utc).isoformat(),"source":SOURCE,"ipos":entries},ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
