@@ -1,15 +1,7 @@
 {
-  "updatedAt": "2026-11-04T06:21:47.278708+00:00",
+  "updatedAt": "2026-11-05T12:53:50.235098+00:00",
   "source": "https://www.goldrank.co.kr/ipo-calendar/",
   "ipos": [
-    {
-      "name": "넥스아이",
-      "subscriptionStart": "2026-11-03",
-      "subscriptionEnd": "2026-11-04",
-      "brokers": "한국투자증권",
-      "type": "일반공모주",
-      "listingDate": "2026-11-12"
-    },
     {
       "name": "영광와이케이엠씨",
       "subscriptionStart": "2026-11-04",
@@ -143,6 +135,13 @@
       "subscriptionStart": "2026-12-09",
       "subscriptionEnd": "2026-12-10",
       "brokers": "한국투자증권,BNK투자증권",
+      "type": "일반공모주"
+    },
+    {
+      "name": "씨아이에스케미칼",
+      "subscriptionStart": "2026-12-10",
+      "subscriptionEnd": "2026-12-11",
+      "brokers": "KB증권",
       "type": "일반공모주"
     }
   ]
