@@ -179,6 +179,8 @@ def finuts_diagnose(html):
     """Print public page structure to identify its actual data endpoint."""
     from urllib.parse import urljoin, urlparse
     print(f"Finuts index HTML bytes: {len(html)}")
+    print("Finuts checkbox input tags:",re.findall(r"<input\\b[^>]*>",html,re.I)[:35])
+    for x in re.finditer("ipo-check",html):print("Finuts checkbox surroundings:",repr(html[x.start():x.start()+1450]));break
     scripts=re.findall(r'<script\b[^>]*\bsrc\s*=\s*["\x27]([^"\x27]+)',html,re.I)
     print(f"Finuts script assets ({len(scripts)}): {scripts[-25:]}")
     for word in ("ipo_sn","ipoView","ipoList","calendar","ajax","events","getList","/api/"):
@@ -205,10 +207,10 @@ def finuts_diagnose(html):
             print(f"Finuts script fetch skipped ({url}): {str(exc)[:110]}")
     from urllib.parse import urlencode
     api="https://www.finuts.co.kr/html/task/ipo/ipoCalendarListQuery.php"
-    for checked in ("", "K", "A,B,C,D,K", "01,02,03,04,05,06"):
+    for checked in (["K"], ["D","S","R","K"], ["sangjang"], ["listing"], ["ipo4"]):
         for month in ("2026.11",):
             try:
-                qs=urlencode({"calendarDate":month,"checkedValue":checked})
+                qs=urlencode({"calendarDate":month,"checkedValue[]":checked},doseq=True)
                 req=urllib.request.Request(api+"?"+qs,headers={"User-Agent":"Mozilla/5.0","Referer":FINUTS_SOURCE,"X-Requested-With":"XMLHttpRequest"})
                 with urllib.request.urlopen(req,timeout=12) as res:body=res.read().decode("utf-8","replace")
                 print(f"Finuts AJAX probe {month} filter={checked!r} length={len(body)} sample={body[:1400]!r}")
