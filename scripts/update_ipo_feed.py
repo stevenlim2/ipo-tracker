@@ -174,6 +174,45 @@ def goldrank_feed():
 
 
 FINUTS_SOURCE = "https://www.finuts.co.kr/html/ipo/"
+
+def finuts_diagnose(html):
+    """Print public page structure to identify its actual data endpoint."""
+    from urllib.parse import urljoin, urlparse
+    print(f"Finuts index HTML bytes: {len(html)}")
+    scripts=re.findall(r'<script\b[^>]*\bsrc\s*=\s*["\x27]([^"\x27]+)',html,re.I)
+    print(f"Finuts script assets ({len(scripts)}): {scripts[-25:]}")
+    for word in ("ipo_sn","ipoView","ipoList","calendar","ajax","events","getList","/api/"):
+        matches=list(re.finditer(re.escape(word),html,re.I))
+        if matches:
+            print(f"Finuts HTML token {word} ({len(matches)}): "+
+                  repr([html[max(0,m.start()-90):m.end()+180] for m in matches[:3]])[:900])
+    visited=0
+    for script in scripts[::-1]:
+        url=urljoin(FINUTS_SOURCE,script)
+        if urlparse(url).hostname not in ("www.finuts.co.kr","finuts.co.kr"):continue
+        if visited>=18:break
+        visited+=1
+        try:
+            req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0"})
+            with urllib.request.urlopen(req,timeout=9) as res:body=res.read(1200000).decode("utf-8","replace")
+            hits=[]
+            for word in ("ipo_sn","ipoView","ipoList","fullCalendar","events:","eventSources","getIpo","getCalendar"):
+                for m in list(re.finditer(re.escape(word),body,re.I))[:2]:
+                    hits.append((word,body[max(0,m.start()-170):m.end()+220]))
+            if hits:
+                print(f"Finuts relevant JS {url}: "+repr(hits[:8])[:1700])
+        except Exception as exc:
+            print(f"Finuts script fetch skipped ({url}): {str(exc)[:110]}")
+    for target in ("ipoList.php?cat=06","ipoList.php?cat=05"):
+        try:
+            url=urljoin(FINUTS_SOURCE,target)
+            req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0"})
+            with urllib.request.urlopen(req,timeout=10) as res:body=res.read().decode("utf-8","replace")
+            print(f"Finuts {target} size={len(body)}, contains ipo_sn={body.count('ipo_sn')}, dates={len(re.findall(r'20\d{2}[./-]\d{2}[./-]\d{2}',body))}")
+            for m in list(re.finditer("ipo_sn|ipoView|ajax|/api/",body,re.I))[:3]:
+                print("Finuts listing page snippet:",repr(body[max(0,m.start()-120):m.end()+200]))
+        except Exception as exc:print(f"Finuts {target} unavailable: {exc}")
+
 class FinutsLinks(HTMLParser):
     def __init__(self):
         super().__init__(); self.ids=set()
@@ -189,7 +228,9 @@ def finuts_dates(entries):
     with urllib.request.urlopen(req,timeout=20) as res:html=res.read().decode("utf-8","replace")
     links=FinutsLinks();links.feed(html)
     print(f"Finuts index discovered {len(links.ids)} IPO detail links")
-    if not links.ids:raise RuntimeError("Finuts detail links not found")
+    if not links.ids:
+        finuts_diagnose(html)
+        raise RuntimeError("Finuts detail links not found; inspected actual JS endpoints")
     names={normalized(x["name"]):x for x in entries}
     def fetch(sn):
         url=FINUTS_SOURCE+"ipoView.php?ipo_sn="+sn
