@@ -169,8 +169,6 @@ def goldrank_feed():
             if not name or len(dates)<2:continue
             start,end=[x.replace(".","-") for x in dates[:2]]
             entries.append({"name":name,"subscriptionStart":start,"subscriptionEnd":end,"brokers":row[bi] if bi>=0 and len(row)>bi else "","type":"스팩" if "스팩" in name else "일반공모주"})
-    if listing_sources_ok==0:
-        raise RuntimeError("All listing-date sources failed; refusing to publish a misleading successful refresh")
     if len(entries)<5:raise RuntimeError("Goldrank returned too few IPOs")
     return entries
 
@@ -287,6 +285,8 @@ def main():
         print("Secondary source cross-check completed")
     except Exception as exc:
         print(f"Secondary listing source unavailable: {exc}")
+    if listing_sources_ok==0:
+        raise RuntimeError("All listing-date sources failed; refusing to publish a misleading successful refresh")
     if len(entries)<5:
         raise RuntimeError(f"Unexpected source format: only {len(entries)} entries; preserving last good feed")
     Path("ipo-feed.json").write_text(json.dumps({"updatedAt":datetime.now(timezone.utc).isoformat(),"source":source_used,"ipos":entries},ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
