@@ -214,6 +214,13 @@ def finuts_diagnose(html):
                 req=urllib.request.Request(api+"?"+qs,headers={"User-Agent":"Mozilla/5.0","Referer":FINUTS_SOURCE,"X-Requested-With":"XMLHttpRequest"})
                 with urllib.request.urlopen(req,timeout=12) as res:body=res.read().decode("utf-8","replace")
                 print(f"Finuts AJAX probe {month} filter={checked!r} length={len(body)} sample={body[:1400]!r}")
+                if checked==["K"]:
+                    from collections import Counter
+                    records=json.loads(body).get("data") or []
+                    print(f"Finuts AJAX event types: {dict(Counter(x.get('SCHDL_SE_CD') for x in records))}")
+                    for row in [x for x in records if x.get("SCHDL_SE_CD")=="K"][:25]:
+                        print("Finuts listing event:",repr({k:v for k,v in row.items() if k in ("ENT_NM","SCHDL_SE_CD","SE_CD","IPO_DATE","BGNG_YMD","END_YMD","IPO_SN") or "DATE" in k or "YMD" in k}))
+
             except Exception as exc:print(f"Finuts AJAX probe error {checked!r}: {exc}")
     for target in ("ipoList.php?cat=06","ipoList.php?cat=05"):
         try:
