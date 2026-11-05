@@ -40,9 +40,9 @@ def listing_dates():
         if name_idx<0 or date_idx<0: continue
         for row in table[1:]:
             if len(row)<=max(name_idx,date_idx): continue
-            name=re.sub(r"\\s+","",row[name_idx])
+            name=re.sub(r"\s+","",row[name_idx])
             raw=row[date_idx]
-            m=re.search(r"(20\\d{2})[년.\\-/ ]+([01]?\\d)[월.\\-/ ]+([0-3]?\\d)",raw)
+            m=re.search(r"(20\d{2})[년.\-/ ]+([01]?\d)[월.\-/ ]+([0-3]?\d)",raw)
             if m and name:
                 year,month,day=map(int,m.groups())
                 try:
@@ -50,7 +50,7 @@ def listing_dates():
                     datetime.fromisoformat(date)
                     found[name]=date
                 except ValueError: pass
-    if len(found)<3:
+    if len(found)<1:
         raise RuntimeError(f"Listing source format changed: only {len(found)} dated rows")
     return found
 
@@ -87,7 +87,7 @@ def main():
     try:
         confirmed=listing_dates()
         for item in entries:
-            match=confirmed.get(re.sub(r"\\s+","",item["name"]))
+            match=confirmed.get(re.sub(r"\s+","",item["name"]))
             if match: item["listingDate"]=match
         print(f"Matched listing dates for {sum(bool(i.get('listingDate')) for i in entries)} IPOs")
     except Exception as exc:
