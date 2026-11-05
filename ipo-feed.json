@@ -1,29 +1,32 @@
 {
-  "updatedAt": "2026-11-05T13:14:24.508139+00:00",
+  "updatedAt": "2026-11-05T13:30:03.338761+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
-  "listingMatches": 6,
+  "listingMatches": 36,
   "ipos": [
     {
       "name": "인제니아테라퓨틱스",
       "subscriptionStart": "2026-07-30",
       "subscriptionEnd": "2026-07-31",
       "brokers": "삼성",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-08-18"
     },
     {
       "name": "딜리셔스",
       "subscriptionStart": "2026-08-03",
       "subscriptionEnd": "2026-08-04",
       "brokers": "한국",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-08-12"
     },
     {
       "name": "케이앤에스아이앤씨",
       "subscriptionStart": "2026-02-04",
       "subscriptionEnd": "2026-08-05",
       "brokers": "IBK",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-08-13"
     },
     {
       "name": "기도산업",
@@ -31,28 +34,31 @@
       "subscriptionEnd": "2026-08-12",
       "brokers": "미래, 삼성",
       "type": "일반공모주",
-      "listingDate": "2027-02-22"
+      "listingDate": "2026-08-21"
     },
     {
       "name": "니어스랩",
       "subscriptionStart": "2026-08-12",
       "subscriptionEnd": "2026-08-13",
       "brokers": "삼성",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-08-24"
     },
     {
       "name": "해치텍",
       "subscriptionStart": "2026-08-12",
       "subscriptionEnd": "2026-08-13",
       "brokers": "DB",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-08-25"
     },
     {
       "name": "스카이랩스",
       "subscriptionStart": "2026-08-26",
       "subscriptionEnd": "2026-08-27",
       "brokers": "한국",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-09-04"
     },
     {
       "name": "엔에이치스팩34호",
@@ -60,7 +66,7 @@
       "subscriptionEnd": "2026-09-02",
       "brokers": "NH",
       "type": "스팩",
-      "listingDate": "2026-12-10"
+      "listingDate": "2026-09-10"
     },
     {
       "name": "KB제34호스팩",
@@ -68,126 +74,143 @@
       "subscriptionEnd": "2026-09-11",
       "brokers": "KB",
       "type": "스팩",
-      "listingDate": "2026-12-22"
+      "listingDate": "2026-09-22"
     },
     {
       "name": "네오사피엔스",
       "subscriptionStart": "2026-09-10",
       "subscriptionEnd": "2026-09-11",
       "brokers": "대신",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-09-21"
     },
     {
       "name": "한국제17호스팩",
       "subscriptionStart": "2026-09-10",
       "subscriptionEnd": "2026-09-11",
       "brokers": "한국",
-      "type": "스팩"
+      "type": "스팩",
+      "listingDate": "2026-09-22"
     },
     {
       "name": "와이즈플래닛컴퍼니",
       "subscriptionStart": "2026-09-14",
       "subscriptionEnd": "2026-09-15",
       "brokers": "대신",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-09-23"
     },
     {
       "name": "빅웨이브로보틱스",
       "subscriptionStart": "2026-09-15",
       "subscriptionEnd": "2026-09-16",
       "brokers": "유진, 미래",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-09-29"
     },
     {
       "name": "글로벌테크놀로지",
       "subscriptionStart": "2026-09-16",
       "subscriptionEnd": "2026-09-17",
       "brokers": "한국",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-09-29"
     },
     {
       "name": "덕산넵코어스",
       "subscriptionStart": "2026-09-16",
       "subscriptionEnd": "2026-09-17",
       "brokers": "대신",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-09-30"
     },
     {
       "name": "브릴스",
       "subscriptionStart": "2026-09-17",
       "subscriptionEnd": "2026-09-18",
       "brokers": "IBK",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-10-01"
     },
     {
       "name": "멜콘",
       "subscriptionStart": "2026-10-01",
       "subscriptionEnd": "2026-10-02",
       "brokers": "대신",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-10-15"
     },
     {
       "name": "진코스텍",
       "subscriptionStart": "2026-10-02",
       "subscriptionEnd": "2026-10-06",
       "brokers": "하나",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-10-15"
     },
     {
       "name": "엘리스",
       "subscriptionStart": "2026-10-07",
       "subscriptionEnd": "2026-10-08",
       "brokers": "미래, 삼성",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-10-20"
     },
     {
       "name": "엠에스바이오",
       "subscriptionStart": "2026-10-12",
       "subscriptionEnd": "2026-10-13",
       "brokers": "KB",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-10-22"
     },
     {
       "name": "디티에스",
       "subscriptionStart": "2026-10-13",
       "subscriptionEnd": "2026-10-14",
       "brokers": "대신, 유진",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-10-23"
     },
     {
       "name": "에스케이증권제14호스팩",
       "subscriptionStart": "2026-10-15",
       "subscriptionEnd": "2026-10-16",
       "brokers": "SK",
-      "type": "스팩"
+      "type": "스팩",
+      "listingDate": "2026-10-27"
     },
     {
       "name": "크리에이츠",
       "subscriptionStart": "2026-10-20",
       "subscriptionEnd": "2026-10-21",
       "brokers": "삼성",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-10-30"
     },
     {
       "name": "티앤이코리아",
       "subscriptionStart": "2026-10-20",
       "subscriptionEnd": "2026-10-21",
       "brokers": "신한",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-10-29"
     },
     {
       "name": "한화플러스제6호스팩",
       "subscriptionStart": "2026-10-20",
       "subscriptionEnd": "2026-10-21",
       "brokers": "한화",
-      "type": "스팩"
+      "type": "스팩",
+      "listingDate": "2026-10-30"
     },
     {
       "name": "인텔리빅스",
       "subscriptionStart": "2026-10-21",
       "subscriptionEnd": "2026-10-22",
       "brokers": "미래",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-10-30"
     },
     {
       "name": "래블업",
@@ -195,7 +218,7 @@
       "subscriptionEnd": "2026-10-23",
       "brokers": "NH",
       "type": "일반공모주",
-      "listingDate": "2027-02-03"
+      "listingDate": "2026-11-03"
     },
     {
       "name": "영광",
@@ -203,7 +226,7 @@
       "subscriptionEnd": "2026-10-23",
       "brokers": "한국",
       "type": "일반공모주",
-      "listingDate": "2027-02-02"
+      "listingDate": "2026-11-02"
     },
     {
       "name": "이에스티",
@@ -211,14 +234,15 @@
       "subscriptionEnd": "2026-10-23",
       "brokers": "대신",
       "type": "일반공모주",
-      "listingDate": "2027-02-04"
+      "listingDate": "2026-11-04"
     },
     {
       "name": "아이엠스팩1호",
       "subscriptionStart": "2026-10-26",
       "subscriptionEnd": "2026-10-27",
       "brokers": "아이엠",
-      "type": "스팩"
+      "type": "스팩",
+      "listingDate": "2026-11-04"
     },
     {
       "name": "동원파츠",
@@ -265,7 +289,8 @@
       "subscriptionStart": "2026-11-06",
       "subscriptionEnd": "2026-11-09",
       "brokers": "대신",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-11-18"
     },
     {
       "name": "하나에어로다이내믹스",
@@ -407,10 +432,5 @@
       "brokers": "NH",
       "type": "일반공모주"
     }
-  ],
-  "manualVerifiedListingSources": {
-    "동원파츠": "https://gongmo.gong24.kr/?ym=2026-11",
-    "바로팜": "https://gongmo.gong24.kr/?ym=2026-11",
-    "넥스아이": "https://gongmo.gong24.kr/?ym=2026-11"
-  }
+  ]
 }
