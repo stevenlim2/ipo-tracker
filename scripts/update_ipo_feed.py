@@ -196,13 +196,23 @@ def finuts_diagnose(html):
             req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0"})
             with urllib.request.urlopen(req,timeout=9) as res:body=res.read(1200000).decode("utf-8","replace")
             hits=[]
-            for word in ("ipo_sn","ipoView","ipoList","fullCalendar","events:","eventSources","getIpo","getCalendar","$.ajax","$.post","$.get","url:","dataType:","ajax/","api/","getList","getData","ENT_NM"):
+            for word in ("calendarDate","checkedValue","SCHDL_SE_CD","SCHDL_YMD","SCHDL_DT","IPO_SN","ENT_NM","url:"):
                 for m in list(re.finditer(re.escape(word),body,re.I))[:2]:
                     hits.append((word,body[max(0,m.start()-170):m.end()+220]))
             if hits:
-                print(f"Finuts relevant JS {url}: "+repr(hits[:28])[:9000])
+                print(f"Finuts relevant JS {url}: "+repr(hits[:50])[:15000])
         except Exception as exc:
             print(f"Finuts script fetch skipped ({url}): {str(exc)[:110]}")
+    from urllib.parse import urlencode
+    api="https://www.finuts.co.kr/html/task/ipo/ipoCalendarListQuery.php"
+    for checked in ("", "K", "A,B,C,D,K", "01,02,03,04,05,06"):
+        for month in ("2026.11",):
+            try:
+                qs=urlencode({"calendarDate":month,"checkedValue":checked})
+                req=urllib.request.Request(api+"?"+qs,headers={"User-Agent":"Mozilla/5.0","Referer":FINUTS_SOURCE,"X-Requested-With":"XMLHttpRequest"})
+                with urllib.request.urlopen(req,timeout=12) as res:body=res.read().decode("utf-8","replace")
+                print(f"Finuts AJAX probe {month} filter={checked!r} length={len(body)} sample={body[:1400]!r}")
+            except Exception as exc:print(f"Finuts AJAX probe error {checked!r}: {exc}")
     for target in ("ipoList.php?cat=06","ipoList.php?cat=05"):
         try:
             url=urljoin(FINUTS_SOURCE,target)
