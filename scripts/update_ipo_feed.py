@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Refresh public IPO calendar without touching private subscription records."""
 import json, re, urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from html.parser import HTMLParser
 from pathlib import Path
 
 SOURCE = "https://www.goldrank.co.kr/ipo-calendar/"
+SOURCE_38_SUB = "https://www.38.co.kr/html/fund/index.htm?o=k"
+SOURCE_38_LIST = "https://www.38.co.kr/html/fund/index.htm?o=nw"
 LISTING_SOURCE = "https://ipo.aippopick.shop/"
 KIND_SOURCE = "https://kind.krx.co.kr/listinvstg/pubofrprogcom.do?method=searchPubofrProgComMain"
 class TableParser(HTMLParser):
@@ -85,6 +87,69 @@ def kind_listing_dates():
         raise RuntimeError("KIND page did not yield any official IPO listing dates")
     return found
 
+
+def tables38(url):
+    req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0","Accept-Language":"ko-KR"})
+    with urllib.request.urlopen(req,timeout=30) as res:
+        raw=res.read()
+    for enc in ("utf-8","cp949","euc-kr"):
+        try:
+            html=raw.decode(enc)
+            if "종목명" in html or "기업명" in html:
+                p=TableParser();p.feed(html);return p.tables
+        except UnicodeError:pass
+    raise RuntimeError("38 source unreadable")
+
+def normalized(name):
+    return re.sub(r"\s+|\(구\.[^)]*\)|\(유가\)","",name)
+
+def feed38():
+    result=[]
+    for table in tables38(SOURCE_38_SUB):
+        if not table:continue
+        head=table[0]
+        ni=next((i for i,c in enumerate(head) if "종목명" in c),-1)
+        di=next((i for i,c in enumerate(head) if "공모주일정" in c),-1)
+        bi=next((i for i,c in enumerate(head) if "주간사" in c),-1)
+        if ni<0 or di<0:continue
+        for row in table[1:]:
+            if len(row)<=max(ni,di):continue
+            m=re.search(r"(20\d{2})[./-](\d{1,2})[./-](\d{1,2})\s*[~～-]\s*(?:(20\d{2})[./-])?(\d{1,2})[./-](\d{1,2})",row[di])
+            if not m:continue
+            y,mo,day,ey,em,ed=m.groups()
+            start=f"{int(y):04d}-{int(mo):02d}-{int(day):02d}"
+            end=f"{int(ey or y):04d}-{int(em):02d}-{int(ed):02d}"
+            try:datetime.fromisoformat(start);datetime.fromisoformat(end)
+            except ValueError:continue
+            name=row[ni].strip()
+            if name:result.append({"name":name,"subscriptionStart":start,"subscriptionEnd":end,"brokers":row[bi] if bi>=0 and len(row)>bi else "","type":"스팩" if "스팩" in name else "일반공모주"})
+    if not result:raise RuntimeError("38 subscription table unavailable")
+    if max(x["subscriptionEnd"] for x in result)<(datetime.now(timezone.utc)-timedelta(days=45)).date().isoformat():
+        raise RuntimeError("38 subscription table stale")
+    return result
+
+def listings38():
+    result={}
+    for table in tables38(SOURCE_38_LIST):
+        if not table:continue
+        head=table[0]
+        ni=next((i for i,c in enumerate(head) if "기업명" in c),-1)
+        di=next((i for i,c in enumerate(head) if "신규상장일" in c),-1)
+        if ni<0 or di<0:continue
+        for row in table[1:]:
+            if len(row)<=max(ni,di):continue
+            m=re.search(r"(20\d{2})[./-](\d{1,2})[./-](\d{1,2})",row[di])
+            if not m:continue
+            y,mo,day=map(int,m.groups())
+            date=f"{y:04d}-{mo:02d}-{day:02d}"
+            try:datetime.fromisoformat(date)
+            except ValueError:continue
+            result[normalized(row[ni])]=date
+    if not result:raise RuntimeError("38 listing table unavailable")
+    if max(result.values())<(datetime.now(timezone.utc)-timedelta(days=45)).date().isoformat():
+        raise RuntimeError("38 listing table stale")
+    return result
+
 def main():
     req=urllib.request.Request(SOURCE, headers={"User-Agent":"Mozilla/5.0 (compatible; IPOCalendarSync/1.0)"})
     with urllib.request.urlopen(req,timeout=25) as res:
@@ -105,14 +170,32 @@ def main():
             start,end=[x.replace(".","-") for x in dates[:2]]
             broker=row[bi] if bi>=0 and len(row)>bi else ""
             entries.append({"name":name,"subscriptionStart":start,"subscriptionEnd":end,"brokers":broker,"type":"스팩" if "스팩" in name else "일반공모주"})
+    # Prefer 38 Communication for subscription dates; reject stale or blocked responses.
+    source_used=SOURCE
+    try:
+        entries38=feed38()
+        entries=entries38
+        source_used=SOURCE_38_SUB
+        print(f"38 subscription records: {len(entries)}")
+    except Exception as exc:
+        print(f"38 subscriptions unavailable; retaining Goldrank feed: {exc}")
     # Preserve verified listing dates across scheduled calendar refreshes.
     old_path=Path("ipo-feed.json")
     if old_path.exists():
         previous=json.loads(old_path.read_text(encoding="utf-8"))
-        known={x["name"]:x.get("listingDate") for x in previous.get("ipos",[]) if x.get("listingDate")}
+        known={normalized(x["name"]):x.get("listingDate") for x in previous.get("ipos",[]) if x.get("listingDate")}
         for item in entries:
-            if item["name"] in known:
-                item["listingDate"]=known[item["name"]]
+            if normalized(item["name"]) in known:
+                item["listingDate"]=known[normalized(item["name"])]
+    # Prefer 38 listing dates, then check official KRX KIND.
+    try:
+        published=listings38()
+        for item in entries:
+            date=published.get(normalized(item["name"]))
+            if date:item["listingDate"]=date
+        print(f"38 listing matches: {sum(normalized(x['name']) in published for x in entries)}")
+    except Exception as exc:
+        print(f"38 listings unavailable; retaining previous dates: {exc}")
     # Primary: official KRX KIND IPO company table. Only published listing dates are applied.
     try:
         official=kind_listing_dates()
@@ -136,6 +219,6 @@ def main():
         print(f"Secondary listing source unavailable: {exc}")
     if len(entries)<5:
         raise RuntimeError(f"Unexpected source format: only {len(entries)} entries; preserving last good feed")
-    Path("ipo-feed.json").write_text(json.dumps({"updatedAt":datetime.now(timezone.utc).isoformat(),"source":SOURCE,"ipos":entries},ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    Path("ipo-feed.json").write_text(json.dumps({"updatedAt":datetime.now(timezone.utc).isoformat(),"source":source_used,"ipos":entries},ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print(f"Saved {len(entries)} IPOs")
 if __name__=="__main__": main()
