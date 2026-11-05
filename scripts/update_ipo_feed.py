@@ -150,35 +150,46 @@ def listings38():
         raise RuntimeError("38 listing table stale")
     return result
 
-def main():
-    req=urllib.request.Request(SOURCE, headers={"User-Agent":"Mozilla/5.0 (compatible; IPOCalendarSync/1.0)"})
+def goldrank_feed():
+    req=urllib.request.Request(SOURCE,headers={"User-Agent":"Mozilla/5.0"})
     with urllib.request.urlopen(req,timeout=25) as res:
         html=res.read().decode("utf-8","replace")
-    p=TableParser(); p.feed(html)
+    p=TableParser();p.feed(html)
     entries=[]
     for table in p.tables:
-        if not table or not any("청약기간" in c for c in table[0]): continue
+        if not table or not any("청약기간" in c for c in table[0]):continue
         header=table[0]
-        def col(word): return next((i for i,c in enumerate(header) if word in c),-1)
+        def col(word):return next((i for i,c in enumerate(header) if word in c),-1)
         ni,di,bi=col("종목"),col("청약기간"),col("주간사")
-        if ni<0 or di<0: continue
+        if ni<0 or di<0:continue
         for row in table[1:]:
-            if len(row)<=max(ni,di): continue
+            if len(row)<=max(ni,di):continue
             name=row[ni].strip()
             dates=re.findall(r"20\d{2}[.-]\d{2}[.-]\d{2}",row[di])
-            if not name or len(dates)<2: continue
+            if not name or len(dates)<2:continue
             start,end=[x.replace(".","-") for x in dates[:2]]
-            broker=row[bi] if bi>=0 and len(row)>bi else ""
-            entries.append({"name":name,"subscriptionStart":start,"subscriptionEnd":end,"brokers":broker,"type":"스팩" if "스팩" in name else "일반공모주"})
-    # Prefer 38 Communication for subscription dates; reject stale or blocked responses.
-    source_used=SOURCE
+            entries.append({"name":name,"subscriptionStart":start,"subscriptionEnd":end,"brokers":row[bi] if bi>=0 and len(row)>bi else "","type":"스팩" if "스팩" in name else "일반공모주"})
+    if len(entries)<5:raise RuntimeError("Goldrank returned too few IPOs")
+    return entries
+
+def main():
+    # Never make the backup source a mandatory prerequisite to the primary source.
+    source_used=SOURCE_38_SUB
     try:
-        entries38=feed38()
-        entries=entries38
-        source_used=SOURCE_38_SUB
+        entries=feed38()
         print(f"38 subscription records: {len(entries)}")
     except Exception as exc:
-        print(f"38 subscriptions unavailable; retaining Goldrank feed: {exc}")
+        print(f"38 subscriptions unavailable, trying Goldrank: {exc}")
+        try:
+            entries=goldrank_feed()
+            source_used=SOURCE
+        except Exception as fallback_exc:
+            print(f"Goldrank unavailable too: {fallback_exc}")
+            previous_path=Path("ipo-feed.json")
+            if not previous_path.exists():raise
+            entries=[dict(item) for item in json.loads(previous_path.read_text(encoding="utf-8")).get("ipos",[])]
+            source_used="preserved-existing-feed"
+            print(f"Preserving {len(entries)} existing IPOs; attempting listing-date updates")
     # Preserve verified listing dates across scheduled calendar refreshes.
     old_path=Path("ipo-feed.json")
     if old_path.exists():
