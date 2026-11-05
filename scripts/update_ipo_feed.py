@@ -178,7 +178,7 @@ FINUTS_CALENDAR_API = "https://www.finuts.co.kr/html/task/ipo/ipoCalendarListQue
 
 def finuts_calendar():
     """Use the live JSON endpoint called by Finuts' own calendar.
-    S is subscription, K is an explicitly published listing event.
+    S is subscription, L is listing; K is lock-up release (not listing).
     """
     from concurrent.futures import ThreadPoolExecutor, as_completed
     from urllib.parse import urlencode
@@ -242,7 +242,7 @@ def finuts_calendar():
         if not key:
             continue
         event_type = str(event.get("SCHDL_SE_CD") or "")
-        if event_type == "K":
+        if event_type == "L":
             date = str(event.get("IPO_DATE") or "").strip()
             try:
                 datetime.fromisoformat(date)
@@ -333,10 +333,9 @@ def main():
             entries.append(dict(item))
             known.add(key)
 
-    old_dates = {
-        normalized(item["name"]): item.get("listingDate")
-        for item in old_entries if item.get("listingDate")
-    }
+    # Do not preserve dates from the old broken K=listing parser.
+    # Those were lock-up release dates, not listings.
+    old_dates = {}
     matches = 0
     for item in entries:
         key = normalized(item["name"])
@@ -347,6 +346,8 @@ def main():
         elif old_dates.get(key):
             item["listingDate"] = old_dates[key]
 
+    if finuts_ok and not finuts_listings:
+        raise RuntimeError("Finuts returned no listing events; refusing to replace the last feed")
     if len(entries) < 5:
         raise RuntimeError(f"Only {len(entries)} IPO entries available; refusing to replace the last feed")
     if not finuts_ok and not entries:
