@@ -190,7 +190,7 @@ def finuts_calendar():
         month = f"{month_number // 12:04d}.{month_number % 12 + 1:02d}"
         qs = urlencode({
             "calendarDate": month,
-            "checkedValue[]": ["chk2", "chk4"],
+            "checkedValue[]": ["K"],
         }, doseq=True)
         request = urllib.request.Request(
             FINUTS_CALENDAR_API + "?" + qs,
