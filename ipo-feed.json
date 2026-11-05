@@ -225,21 +225,24 @@
       "subscriptionStart": "2026-11-02",
       "subscriptionEnd": "2026-11-03",
       "brokers": "삼성",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-11-10"
     },
     {
       "name": "바로팜",
       "subscriptionStart": "2026-11-02",
       "subscriptionEnd": "2026-11-03",
       "brokers": "미래",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-11-11"
     },
     {
       "name": "넥스아이",
       "subscriptionStart": "2026-11-03",
       "subscriptionEnd": "2026-11-04",
       "brokers": "한국",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-11-12"
     },
     {
       "name": "영광와이케이엠씨",
@@ -404,5 +407,10 @@
       "brokers": "NH",
       "type": "일반공모주"
     }
-  ]
+  ],
+  "manualVerifiedListingSources": {
+    "동원파츠": "https://gongmo.gong24.kr/?ym=2026-11",
+    "바로팜": "https://gongmo.gong24.kr/?ym=2026-11",
+    "넥스아이": "https://gongmo.gong24.kr/?ym=2026-11"
+  }
 }
