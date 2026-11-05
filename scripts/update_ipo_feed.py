@@ -196,11 +196,11 @@ def finuts_diagnose(html):
             req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0"})
             with urllib.request.urlopen(req,timeout=9) as res:body=res.read(1200000).decode("utf-8","replace")
             hits=[]
-            for word in ("ipo_sn","ipoView","ipoList","fullCalendar","events:","eventSources","getIpo","getCalendar"):
+            for word in ("ipo_sn","ipoView","ipoList","fullCalendar","events:","eventSources","getIpo","getCalendar","$.ajax","$.post","$.get","url:","dataType:","ajax/","api/","getList","getData","ENT_NM"):
                 for m in list(re.finditer(re.escape(word),body,re.I))[:2]:
                     hits.append((word,body[max(0,m.start()-170):m.end()+220]))
             if hits:
-                print(f"Finuts relevant JS {url}: "+repr(hits[:8])[:1700])
+                print(f"Finuts relevant JS {url}: "+repr(hits[:28])[:9000])
         except Exception as exc:
             print(f"Finuts script fetch skipped ({url}): {str(exc)[:110]}")
     for target in ("ipoList.php?cat=06","ipoList.php?cat=05"):
