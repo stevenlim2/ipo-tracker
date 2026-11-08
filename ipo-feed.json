@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-08T18:49:38.783910+00:00",
+  "updatedAt": "2026-11-08T23:42:09.377911+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
   "listingMatches": 36,
@@ -416,6 +416,13 @@
       "subscriptionStart": "2026-12-10",
       "subscriptionEnd": "2026-12-11",
       "brokers": "KB",
+      "type": "일반공모주"
+    },
+    {
+      "name": "KTE",
+      "subscriptionStart": "2026-12-14",
+      "subscriptionEnd": "2026-12-15",
+      "brokers": "NH투자증권",
       "type": "일반공모주"
     },
     {
