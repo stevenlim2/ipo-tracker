@@ -1,17 +1,9 @@
 {
-  "updatedAt": "2026-11-08T23:42:09.377911+00:00",
+  "updatedAt": "2026-11-09T06:25:23.254997+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
-  "listingMatches": 36,
+  "listingMatches": 35,
   "ipos": [
-    {
-      "name": "인제니아테라퓨틱스",
-      "subscriptionStart": "2026-07-30",
-      "subscriptionEnd": "2026-07-31",
-      "brokers": "삼성",
-      "type": "일반공모주",
-      "listingDate": "2026-08-18"
-    },
     {
       "name": "딜리셔스",
       "subscriptionStart": "2026-08-03",
