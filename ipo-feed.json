@@ -1,8 +1,8 @@
 {
-  "updatedAt": "2026-11-09T06:25:23.254997+00:00",
+  "updatedAt": "2026-11-09T18:48:15.579526+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
-  "listingMatches": 35,
+  "listingMatches": 36,
   "ipos": [
     {
       "name": "딜리셔스",
@@ -289,7 +289,8 @@
       "subscriptionStart": "2026-11-10",
       "subscriptionEnd": "2026-11-11",
       "brokers": "IBK",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-11-20"
     },
     {
       "name": "씨앤엠",
