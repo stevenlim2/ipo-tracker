@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-11T01:55:40.366766+00:00",
+  "updatedAt": "2026-11-11T09:24:45.569206+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
   "listingMatches": 37,
@@ -296,7 +296,7 @@
       "name": "씨앤엠",
       "subscriptionStart": "2026-11-12",
       "subscriptionEnd": "2026-11-13",
-      "brokers": "한국",
+      "brokers": "한국투자증권",
       "type": "일반공모주"
     },
     {
@@ -311,7 +311,7 @@
       "name": "제이앤티지",
       "subscriptionStart": "2026-11-12",
       "subscriptionEnd": "2026-11-13",
-      "brokers": "대신, NH",
+      "brokers": "대신증권,NH투자증권",
       "type": "일반공모주"
     },
     {
@@ -402,7 +402,7 @@
       "name": "마더스제약",
       "subscriptionStart": "2026-12-08",
       "subscriptionEnd": "2026-12-09",
-      "brokers": "KB증권,NH투자증권",
+      "brokers": "KB, NH",
       "type": "일반공모주"
     },
     {
