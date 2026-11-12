@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-12T00:43:01.137445+00:00",
+  "updatedAt": "2026-11-12T09:49:11.225105+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
   "listingMatches": 37,
@@ -364,13 +364,6 @@
       "type": "일반공모주"
     },
     {
-      "name": "다비오",
-      "subscriptionStart": "2026-12-01",
-      "subscriptionEnd": "2026-12-02",
-      "brokers": "대신",
-      "type": "일반공모주"
-    },
-    {
       "name": "엔키화이트햇",
       "subscriptionStart": "2026-12-01",
       "subscriptionEnd": "2026-12-02",
@@ -403,6 +396,13 @@
       "subscriptionStart": "2026-12-08",
       "subscriptionEnd": "2026-12-09",
       "brokers": "KB, NH",
+      "type": "일반공모주"
+    },
+    {
+      "name": "다비오",
+      "subscriptionStart": "2026-12-09",
+      "subscriptionEnd": "2026-12-10",
+      "brokers": "대신",
       "type": "일반공모주"
     },
     {
