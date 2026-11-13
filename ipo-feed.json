@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-13T09:30:23.351939+00:00",
+  "updatedAt": "2026-11-13T17:43:57.302165+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
   "listingMatches": 36,
@@ -335,13 +335,6 @@
       "type": "스팩"
     },
     {
-      "name": "제논",
-      "subscriptionStart": "2026-11-24",
-      "subscriptionEnd": "2026-11-25",
-      "brokers": "삼성",
-      "type": "일반공모주"
-    },
-    {
       "name": "케이엠에프",
       "subscriptionStart": "2026-11-24",
       "subscriptionEnd": "2026-11-25",
@@ -423,6 +416,13 @@
       "subscriptionStart": "2026-12-14",
       "subscriptionEnd": "2026-12-15",
       "brokers": "한국",
+      "type": "일반공모주"
+    },
+    {
+      "name": "제논",
+      "subscriptionStart": "2026-12-14",
+      "subscriptionEnd": "2026-12-15",
+      "brokers": "삼성",
       "type": "일반공모주"
     },
     {
