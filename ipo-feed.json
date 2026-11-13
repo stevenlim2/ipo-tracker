@@ -1,17 +1,9 @@
 {
-  "updatedAt": "2026-11-12T18:19:21.551157+00:00",
+  "updatedAt": "2026-11-13T01:04:34.160621+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
-  "listingMatches": 37,
+  "listingMatches": 36,
   "ipos": [
-    {
-      "name": "딜리셔스",
-      "subscriptionStart": "2026-08-03",
-      "subscriptionEnd": "2026-08-04",
-      "brokers": "한국",
-      "type": "일반공모주",
-      "listingDate": "2026-08-12"
-    },
     {
       "name": "케이앤에스아이앤씨",
       "subscriptionStart": "2026-02-04",
