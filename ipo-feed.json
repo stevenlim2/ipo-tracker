@@ -1,17 +1,9 @@
 {
-  "updatedAt": "2026-11-13T23:32:16.803317+00:00",
+  "updatedAt": "2026-11-14T06:20:47.449030+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
-  "listingMatches": 36,
+  "listingMatches": 35,
   "ipos": [
-    {
-      "name": "케이앤에스아이앤씨",
-      "subscriptionStart": "2026-02-04",
-      "subscriptionEnd": "2026-08-05",
-      "brokers": "IBK",
-      "type": "일반공모주",
-      "listingDate": "2026-08-13"
-    },
     {
       "name": "기도산업",
       "subscriptionStart": "2026-08-11",
@@ -430,6 +422,13 @@
       "subscriptionStart": "2026-12-14",
       "subscriptionEnd": "2026-12-15",
       "brokers": "NH",
+      "type": "일반공모주"
+    },
+    {
+      "name": "태석광학",
+      "subscriptionStart": "2026-12-14",
+      "subscriptionEnd": "2026-12-15",
+      "brokers": "신한투자증권,대신증권",
       "type": "일반공모주"
     }
   ]
