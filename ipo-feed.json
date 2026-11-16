@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-15T22:47:52.926934+00:00",
+  "updatedAt": "2026-11-16T06:27:07.700730+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
   "listingMatches": 35,
@@ -428,7 +428,7 @@
       "name": "태석광학",
       "subscriptionStart": "2026-12-14",
       "subscriptionEnd": "2026-12-15",
-      "brokers": "신한투자증권,대신증권",
+      "brokers": "신한, 대신",
       "type": "일반공모주"
     }
   ]
