@@ -1,8 +1,8 @@
 {
-  "updatedAt": "2026-11-17T02:55:35.611210+00:00",
+  "updatedAt": "2026-11-17T13:24:44.643618+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
-  "listingMatches": 35,
+  "listingMatches": 36,
   "ipos": [
     {
       "name": "기도산업",
@@ -299,10 +299,10 @@
       "type": "일반공모주"
     },
     {
-      "name": "에스에프씨",
+      "name": "에스에프씨 (유가)",
       "subscriptionStart": "2026-11-18",
       "subscriptionEnd": "2026-11-19",
-      "brokers": "미래, 한국, 삼성",
+      "brokers": "미래에셋증권,한국투자증권,삼성증권",
       "type": "일반공모주"
     },
     {
@@ -310,7 +310,8 @@
       "subscriptionStart": "2026-11-18",
       "subscriptionEnd": "2026-11-19",
       "brokers": "유진, 신영",
-      "type": "일반공모주"
+      "type": "일반공모주",
+      "listingDate": "2026-11-30"
     },
     {
       "name": "아델",
@@ -397,17 +398,17 @@
       "type": "일반공모주"
     },
     {
+      "name": "데스틴파워",
+      "subscriptionStart": "2026-12-11",
+      "subscriptionEnd": "2026-12-14",
+      "brokers": "한국",
+      "type": "일반공모주"
+    },
+    {
       "name": "KTE",
       "subscriptionStart": "2026-12-14",
       "subscriptionEnd": "2026-12-15",
       "brokers": "NH투자증권",
-      "type": "일반공모주"
-    },
-    {
-      "name": "데스틴파워",
-      "subscriptionStart": "2026-12-14",
-      "subscriptionEnd": "2026-12-15",
-      "brokers": "한국",
       "type": "일반공모주"
     },
     {
