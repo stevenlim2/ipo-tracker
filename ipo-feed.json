@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-17T22:22:42.979554+00:00",
+  "updatedAt": "2026-11-18T07:26:42.744555+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
   "listingMatches": 36,
@@ -430,6 +430,13 @@
       "subscriptionStart": "2026-12-14",
       "subscriptionEnd": "2026-12-15",
       "brokers": "신한, 대신",
+      "type": "일반공모주"
+    },
+    {
+      "name": "이나인페이",
+      "subscriptionStart": "2026-12-16",
+      "subscriptionEnd": "2026-12-17",
+      "brokers": "한국투자증권",
       "type": "일반공모주"
     }
   ]
