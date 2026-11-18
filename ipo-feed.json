@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-18T07:26:42.744555+00:00",
+  "updatedAt": "2026-11-18T17:15:22.800086+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
   "listingMatches": 36,
@@ -412,6 +412,13 @@
       "type": "일반공모주"
     },
     {
+      "name": "엠디에스코리아",
+      "subscriptionStart": "2026-12-14",
+      "subscriptionEnd": "2026-12-15",
+      "brokers": "미래",
+      "type": "일반공모주"
+    },
+    {
       "name": "제논",
       "subscriptionStart": "2026-12-14",
       "subscriptionEnd": "2026-12-15",
@@ -436,7 +443,7 @@
       "name": "이나인페이",
       "subscriptionStart": "2026-12-16",
       "subscriptionEnd": "2026-12-17",
-      "brokers": "한국투자증권",
+      "brokers": "한국",
       "type": "일반공모주"
     }
   ]
