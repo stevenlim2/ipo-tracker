@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-20T03:14:02.233706+00:00",
+  "updatedAt": "2026-11-20T12:52:29.711963+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
   "listingMatches": 36,
@@ -267,6 +267,14 @@
       "brokers": "대신",
       "type": "일반공모주",
       "listingDate": "2026-11-18"
+    },
+    {
+      "name": "하나에어로",
+      "subscriptionStart": "2026-11-10",
+      "subscriptionEnd": "2026-11-11",
+      "brokers": "IBK",
+      "type": "일반공모주",
+      "listingDate": "2026-11-20"
     },
     {
       "name": "하나에어로다이내믹스",
