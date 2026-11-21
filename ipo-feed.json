@@ -1,17 +1,9 @@
 {
-  "updatedAt": "2026-11-20T21:48:21.433581+00:00",
+  "updatedAt": "2026-11-21T03:12:21.248473+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
-  "listingMatches": 36,
+  "listingMatches": 35,
   "ipos": [
-    {
-      "name": "기도산업",
-      "subscriptionStart": "2026-08-11",
-      "subscriptionEnd": "2026-08-12",
-      "brokers": "미래, 삼성",
-      "type": "일반공모주",
-      "listingDate": "2026-08-21"
-    },
     {
       "name": "니어스랩",
       "subscriptionStart": "2026-08-12",
@@ -452,6 +444,13 @@
       "subscriptionStart": "2026-12-16",
       "subscriptionEnd": "2026-12-17",
       "brokers": "한국",
+      "type": "일반공모주"
+    },
+    {
+      "name": "피지티",
+      "subscriptionStart": "2026-12-17",
+      "subscriptionEnd": "2026-12-18",
+      "brokers": "한국투자증권,유안타증권",
       "type": "일반공모주"
     }
   ]
