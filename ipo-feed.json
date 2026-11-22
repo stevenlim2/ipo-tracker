@@ -1,25 +1,9 @@
 {
-  "updatedAt": "2026-11-21T20:31:12.484050+00:00",
+  "updatedAt": "2026-11-22T02:14:08.507606+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
-  "listingMatches": 35,
+  "listingMatches": 33,
   "ipos": [
-    {
-      "name": "니어스랩",
-      "subscriptionStart": "2026-08-12",
-      "subscriptionEnd": "2026-08-13",
-      "brokers": "삼성",
-      "type": "일반공모주",
-      "listingDate": "2026-08-24"
-    },
-    {
-      "name": "해치텍",
-      "subscriptionStart": "2026-08-12",
-      "subscriptionEnd": "2026-08-13",
-      "brokers": "DB",
-      "type": "일반공모주",
-      "listingDate": "2026-08-25"
-    },
     {
       "name": "스카이랩스",
       "subscriptionStart": "2026-08-26",
