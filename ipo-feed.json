@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-23T07:36:09.748205+00:00",
+  "updatedAt": "2026-11-23T20:12:55.720545+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
   "listingMatches": 33,
@@ -434,7 +434,7 @@
       "name": "피지티",
       "subscriptionStart": "2026-12-17",
       "subscriptionEnd": "2026-12-18",
-      "brokers": "한국투자증권,유안타증권",
+      "brokers": "한국, 유안타",
       "type": "일반공모주"
     }
   ]
