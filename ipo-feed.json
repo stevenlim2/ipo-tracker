@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-25T14:20:46.330295+00:00",
+  "updatedAt": "2026-11-26T00:19:41.088502+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
   "listingMatches": 34,
@@ -429,6 +429,13 @@
       "subscriptionStart": "2026-12-16",
       "subscriptionEnd": "2026-12-17",
       "brokers": "한국",
+      "type": "일반공모주"
+    },
+    {
+      "name": "범한메카텍(구.두산메카텍)",
+      "subscriptionStart": "2026-12-17",
+      "subscriptionEnd": "2026-12-18",
+      "brokers": "NH투자증권,유진투자증권,BNK투자증권",
       "type": "일반공모주"
     },
     {
