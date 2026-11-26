@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-26T00:19:41.088502+00:00",
+  "updatedAt": "2026-11-26T10:52:39.542232+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
   "listingMatches": 34,
@@ -323,7 +323,7 @@
       "name": "에이엔에이치스트럭쳐",
       "subscriptionStart": "2026-11-27",
       "subscriptionEnd": "2026-11-30",
-      "brokers": "NH",
+      "brokers": "NH투자증권",
       "type": "일반공모주"
     },
     {
@@ -432,10 +432,10 @@
       "type": "일반공모주"
     },
     {
-      "name": "범한메카텍(구.두산메카텍)",
+      "name": "범한메카텍",
       "subscriptionStart": "2026-12-17",
       "subscriptionEnd": "2026-12-18",
-      "brokers": "NH투자증권,유진투자증권,BNK투자증권",
+      "brokers": "NH, 유진, BNK",
       "type": "일반공모주"
     },
     {
