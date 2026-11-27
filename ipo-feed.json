@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-27T04:14:27.213050+00:00",
+  "updatedAt": "2026-11-27T13:56:57.529138+00:00",
   "source": "https://www.finuts.co.kr/html/ipo/",
   "listingSource": "https://www.finuts.co.kr/html/ipo/",
   "listingMatches": 34,
@@ -376,13 +376,6 @@
       "type": "일반공모주"
     },
     {
-      "name": "씨아이에스케미칼",
-      "subscriptionStart": "2026-12-10",
-      "subscriptionEnd": "2026-12-11",
-      "brokers": "KB",
-      "type": "일반공모주"
-    },
-    {
       "name": "데스틴파워",
       "subscriptionStart": "2026-12-11",
       "subscriptionEnd": "2026-12-14",
@@ -443,6 +436,13 @@
       "subscriptionStart": "2026-12-17",
       "subscriptionEnd": "2026-12-18",
       "brokers": "한국, 유안타",
+      "type": "일반공모주"
+    },
+    {
+      "name": "씨아이에스케미칼",
+      "subscriptionStart": "2027-01-21",
+      "subscriptionEnd": "2027-01-22",
+      "brokers": "KB",
       "type": "일반공모주"
     }
   ]
